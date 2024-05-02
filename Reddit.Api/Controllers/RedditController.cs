@@ -17,5 +17,13 @@ namespace Reddit.Api.Controllers
         {
             return Ok();
         }
+        
+        [HttpGet]
+        [Route("/redirect")]
+        public IActionResult Redirection(string code)
+        {
+
+            return Ok();
+        }
     }
 }
