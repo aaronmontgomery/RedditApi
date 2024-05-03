@@ -86,8 +86,8 @@ namespace Reddit.Api
                             {
                                 if (children.Data is not null && children.Data.Description is not null)
                                 {
-                                    await Task.Delay(1000);
-                                    Task task = webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(children.Data.Description)), WebSocketMessageType.Text, true, CancellationToken.None);
+                                    await Task.Delay(10000);
+                                    await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(children.Data.Description)), WebSocketMessageType.Text, true, CancellationToken.None);
                                 }
                             }
                         }
