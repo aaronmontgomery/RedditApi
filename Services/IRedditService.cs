@@ -1,7 +1,9 @@
-﻿namespace Services
+﻿using Models;
+
+namespace Services
 {
     public interface IRedditService
     {
-        void GetSubReddit();
+        Task<PopularModel?> GetSubRedditAsync();
     }
 }

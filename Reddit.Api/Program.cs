@@ -1,5 +1,8 @@
-
+using System.Text;
+using System.Net.Http.Headers;
+using System.Net.WebSockets;
 using Services;
+using Models;
 
 namespace Reddit.Api
 {
@@ -8,22 +11,38 @@ namespace Reddit.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // Add services to the container.
-
+            
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            
             builder.Services.AddEndpointsApiExplorer();
+            
             builder.Services.AddSwaggerGen();
             
-            builder.Services.AddHttpClient(nameof (RedditAuthService), x =>
+            builder.Services.Configure<SettingsOptionsModel>(builder.Configuration.GetSection(SettingsOptionsModel.Settings));
+            
+            builder.Services.Configure<RedditApiSettingsOptionsModel>(builder.Configuration.GetSection(RedditApiSettingsOptionsModel.RedditApiSettings));
+            
+            builder.Services.AddHttpClient("RedditApiAuthHttpClient", x =>
             {
-
+                string? baseUrl = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiBaseUrl");
+                string? username = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiUsername");
+                string? password = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiPassword");
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                x.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+                x.DefaultRequestHeaders.UserAgent.ParseAdd("Reddit.Api/v1 (by /u/aaronmontgomery2809)");
+                x.BaseAddress = new Uri(baseUrl!);
             });
             
-            builder.Services.AddSingleton<IWebSocketHandlerService, WebSocketHandlerService>();
+            builder.Services.AddHttpClient("RedditApiOauthHttpClient", x =>
+            {
+                string? baseUrl = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiOauthBaseUrl");
+                x.DefaultRequestHeaders.UserAgent.ParseAdd("Reddit.Api/v1 (by /u/aaronmontgomery2809)");
+                x.BaseAddress = new Uri(baseUrl!);
+            });
             
             builder.Services.AddSingleton<IRedditAuthService, RedditAuthService>();
+            
+            builder.Services.AddScoped<IRedditRedirectService, RedditRedirectService>();
             
             builder.Services.AddScoped<IRedditService, RedditService>();
             
@@ -50,13 +69,29 @@ namespace Reddit.Api
             app.UseAuthorization();
             
             app.MapControllers();
-            
+
             app.MapGet("/reddit", async context =>
             {
                 if (context.WebSockets.IsWebSocketRequest)
                 {
                     var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                     var redditService = context.RequestServices.GetRequiredService<IRedditService>();
+                    
+                    while (true)
+                    {
+                        PopularModel? popularModel = await redditService.GetSubRedditAsync();
+                        if (popularModel is not null && popularModel.Data is not null && popularModel.Data.Childrens is not null)
+                        {
+                            foreach (Children children in popularModel.Data.Childrens)
+                            {
+                                if (children.Data is not null && children.Data.Description is not null)
+                                {
+                                    await Task.Delay(1000);
+                                    Task task = webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(children.Data.Description)), WebSocketMessageType.Text, true, CancellationToken.None);
+                                }
+                            }
+                        }
+                    }
                 }
 
                 else
@@ -65,7 +100,7 @@ namespace Reddit.Api
                     await context.Response.WriteAsync("Expected a WebSocket request");
                 }
             });
-
+            
             app.Run();
         }
     }
