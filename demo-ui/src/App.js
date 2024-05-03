@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 function App() {
   
-  const [data, setData] = useState('')
+  const [data, setData] = useState('Loading . . . . ')
   
   useEffect(() => {
     
@@ -41,7 +41,7 @@ function App() {
     
     // Close WebSocket connection (optional)
     // socket.close();
-  })
+  }, [])
   
   return (
     <div>
