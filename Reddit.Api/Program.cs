@@ -79,14 +79,14 @@ namespace Reddit.Api
                     
                     while (true)
                     {
-                        PopularModel? popularModel = await redditService.GetSubRedditAsync(redditService.HttpClient);
+                        PopularModel? popularModel = await redditService.Get<PopularModel>(redditService.HttpClient, builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiOauthPopularUrl")!);
                         if (popularModel is not null && popularModel.Data is not null && popularModel.Data.Childrens is not null)
                         {
                             foreach (Children children in popularModel.Data.Childrens)
                             {
                                 if (children.Data is not null && children.Data.Description is not null)
                                 {
-                                    await Task.Delay(3100);
+                                    await Task.Delay(3500);
                                     await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(children.Data.Description)), WebSocketMessageType.Text, true, CancellationToken.None);
                                 }
                             }
