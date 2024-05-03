@@ -79,7 +79,7 @@ namespace Reddit.Api
                     
                     while (true)
                     {
-                        PopularModel? popularModel = await redditService.GetSubRedditAsync();
+                        PopularModel? popularModel = await redditService.GetSubRedditAsync(redditService.HttpClient);
                         if (popularModel is not null && popularModel.Data is not null && popularModel.Data.Childrens is not null)
                         {
                             foreach (Children children in popularModel.Data.Childrens)

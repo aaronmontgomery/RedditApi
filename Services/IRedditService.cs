@@ -4,6 +4,8 @@ namespace Services
 {
     public interface IRedditService
     {
-        Task<PopularModel?> GetSubRedditAsync();
+        HttpClient HttpClient { get; }
+        
+        Task<PopularModel?> GetSubRedditAsync(HttpClient httpClient);
     }
 }

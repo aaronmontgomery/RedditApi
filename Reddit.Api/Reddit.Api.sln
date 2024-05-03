@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reddit.Api", "Reddit.Api.csproj", "{A65187DC-C783-4F03-978D-7ED6B8686301}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reddit.Api", "Reddit.Api.csproj", "{A65187DC-C783-4F03-978D-7ED6B8686301}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "..\Services\Services.csproj", "{3E4F52AE-16BA-489E-879A-42FDA5313AD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "..\Services\Services.csproj", "{3E4F52AE-16BA-489E-879A-42FDA5313AD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "..\Models\Models.csproj", "{2CE519BA-4619-4FAB-A9B9-89B1700002EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "..\Models\Models.csproj", "{2CE519BA-4619-4FAB-A9B9-89B1700002EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
