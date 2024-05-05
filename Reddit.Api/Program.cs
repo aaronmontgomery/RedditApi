@@ -96,7 +96,7 @@ namespace Reddit.Api
                 else
                 {
                     context.Response.StatusCode = 400;
-                    await context.Response.WriteAsync("Expected a WebSocket request");
+                    await context.Response.WriteAsync("Expected a WebSocket request", context.RequestAborted);
                 }
             });
             
