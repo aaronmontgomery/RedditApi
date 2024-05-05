@@ -74,9 +74,8 @@ namespace Reddit.Api
             {
                 if (context.WebSockets.IsWebSocketRequest)
                 {
-                    var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                    var redditService = context.RequestServices.GetRequiredService<IRedditService>();
-                    
+                    WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                    IRedditService redditService = context.RequestServices.GetRequiredService<IRedditService>();
                     while (!context.RequestAborted.IsCancellationRequested)
                     {
                         PopularModel? popularModel = await redditService.Get<PopularModel>(redditService.HttpClient, builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiOauthPopularUrl")!);
@@ -86,7 +85,7 @@ namespace Reddit.Api
                             {
                                 if (children.Data is not null && children.Data.Description is not null)
                                 {
-                                    await Task.Delay(3500);
+                                    await Task.Delay(3500, context.RequestAborted);
                                     await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(children.Data.Description)), WebSocketMessageType.Text, true, context.RequestAborted);
                                 }
                             }
