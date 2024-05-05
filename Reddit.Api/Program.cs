@@ -11,17 +11,17 @@ namespace Reddit.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            
+
             builder.Services.AddControllers();
-            
+
             builder.Services.AddEndpointsApiExplorer();
-            
+
             builder.Services.AddSwaggerGen();
-            
+
             builder.Services.Configure<SettingsOptionsModel>(builder.Configuration.GetSection(SettingsOptionsModel.Settings));
-            
+
             builder.Services.Configure<RedditApiSettingsOptionsModel>(builder.Configuration.GetSection(RedditApiSettingsOptionsModel.RedditApiSettings));
-            
+
             builder.Services.AddHttpClient("RedditApiAuthHttpClient", x =>
             {
                 string? baseUrl = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiBaseUrl");
@@ -32,20 +32,20 @@ namespace Reddit.Api
                 x.DefaultRequestHeaders.UserAgent.ParseAdd("Reddit.Api/v1 (by /u/aaronmontgomery2809)");
                 x.BaseAddress = new Uri(baseUrl!);
             });
-            
+
             builder.Services.AddHttpClient("RedditApiOauthHttpClient", x =>
             {
                 string? baseUrl = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiOauthBaseUrl");
                 x.DefaultRequestHeaders.UserAgent.ParseAdd("Reddit.Api/v1 (by /u/aaronmontgomery2809)");
                 x.BaseAddress = new Uri(baseUrl!);
             });
-            
+
             builder.Services.AddSingleton<IRedditAuthService, RedditAuthService>();
-            
+
             builder.Services.AddScoped<IRedditRedirectService, RedditRedirectService>();
-            
+
             builder.Services.AddScoped<IRedditService, RedditService>();
-            
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -54,7 +54,7 @@ namespace Reddit.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            
+
             var webSocketOptions = new WebSocketOptions
             {
                 KeepAliveInterval = TimeSpan.FromMinutes(2)
@@ -65,9 +65,9 @@ namespace Reddit.Api
             app.UseWebSockets(webSocketOptions);
 
             app.UseHttpsRedirection();
-            
+
             app.UseAuthorization();
-            
+
             app.MapControllers();
 
             app.MapGet("/reddit", async context =>
@@ -77,7 +77,7 @@ namespace Reddit.Api
                     var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                     var redditService = context.RequestServices.GetRequiredService<IRedditService>();
                     
-                    while (true)
+                    while (!context.RequestAborted.IsCancellationRequested)
                     {
                         PopularModel? popularModel = await redditService.Get<PopularModel>(redditService.HttpClient, builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiOauthPopularUrl")!);
                         if (popularModel is not null && popularModel.Data is not null && popularModel.Data.Childrens is not null)
@@ -87,7 +87,7 @@ namespace Reddit.Api
                                 if (children.Data is not null && children.Data.Description is not null)
                                 {
                                     await Task.Delay(3500);
-                                    await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(children.Data.Description)), WebSocketMessageType.Text, true, CancellationToken.None);
+                                    await webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(children.Data.Description)), WebSocketMessageType.Text, true, context.RequestAborted);
                                 }
                             }
                         }
