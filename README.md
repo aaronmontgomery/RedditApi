@@ -17,11 +17,11 @@
 
 7) set the client id and secret properties in the Reddit.Api .NET project appsettings.json
 
-8) run the Reddit.Api project in Visual Studio Solution Explorer: Reddit.Api -> Debug -> Start New Instance
+8) run the Reddit.Api project from Visual Studio Solution Explorer: Reddit.Api -> Debug -> Start New Instance
 
 9) set the client_Id in the code flow url before the '&' and after the 'client_id='
 
-	- https://www.reddit.com/api/v1/authorize?client_id=&response_type=code&state=RANDOM_STRING&redirect_uri=https://localhost:7038/redirect&duration=temporary&scope=read
+	https://www.reddit.com/api/v1/authorize?client_id=&response_type=code&state=RANDOM_STRING&redirect_uri=https://localhost:7038/redirect&duration=temporary&scope=read
 
 11) paste the modified code flow url in a browser new tab address bar
 
