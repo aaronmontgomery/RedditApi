@@ -7,21 +7,18 @@ function App() {
   
   useEffect(() => {
     
-    // Establish WebSocket connection
-    const socket = new WebSocket('wss://localhost:7038/reddit');
+    const socket = new WebSocket(process.env.REACT_APP_WSS_URL);
     
-    // WebSocket event handlers
-    socket.onopen = function(event) { //debugger;
+    socket.onopen = function(event) {
       console.log('WebSocket connection established.');
     };
     
-    socket.onmessage = function(event) { //debugger;
-      // Handle incoming message
+    socket.onmessage = function(event) {
       console.log('Received message:', event.data);
       setData(event.data);
     };
     
-    socket.onclose = function(event) { //debugger;
+    socket.onclose = function(event) {
       if (event.wasClean) {
         console.log(`WebSocket connection closed cleanly, code=${event.code} reason=${event.reason}`);
       }
@@ -31,16 +28,10 @@ function App() {
       }
     };
     
-    socket.onerror = function(error) { //debugger;
+    socket.onerror = function(error) {
       console.error('WebSocket encountered error:', error);
     };
-    
-    // Sending messages (optional)
-    // You can send messages after the WebSocket connection is established
-    // socket.send('Hello, server!');
-    
-    // Close WebSocket connection (optional)
-    // socket.close();
+
   }, [])
   
   return (
