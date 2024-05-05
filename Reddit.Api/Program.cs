@@ -78,7 +78,7 @@ namespace Reddit.Api
                     IRedditService redditService = context.RequestServices.GetRequiredService<IRedditService>();
                     while (!context.RequestAborted.IsCancellationRequested)
                     {
-                        PopularModel? popularModel = await redditService.Get<PopularModel>(redditService.HttpClient, builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiOauthPopularUrl")!);
+                        PopularModel? popularModel = await redditService.Get<PopularModel>(redditService.HttpClient, builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiOauthPopularUrl")!, context.RequestAborted);
                         if (popularModel is not null && popularModel.Data is not null && popularModel.Data.Childrens is not null)
                         {
                             foreach (Children children in popularModel.Data.Childrens)
