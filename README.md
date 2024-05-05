@@ -16,7 +16,7 @@
 
 6) set the client id and secret properties in the Reddit.Api .NET project appsettings.json
 
-7) run Reddit.Api project in Visual Studio Solution Explorer: right click -> Debug -> Start New Instance
+7) run the Reddit.Api project in Visual Studio Solution Explorer: right click Reddit.Api -> Debug -> Start New Instance
 
 8) set the client_Id in the code flow url before the '&' and after the 'client_id='
 
