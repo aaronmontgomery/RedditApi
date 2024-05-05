@@ -7,6 +7,7 @@ namespace Services
     public class RedditAuthService(IHttpClientFactory httpClientFactory, IOptionsMonitor<RedditApiSettingsOptionsModel> optionsMonitor) : IRedditAuthService
     {
         public HttpClient HttpClient => _httpClientFactory.CreateClient("RedditApiAuthHttpClient");
+        
         public RedditTokenModel? RedditTokenModel => _redditTokenModel;
 
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;

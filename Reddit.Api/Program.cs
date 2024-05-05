@@ -25,9 +25,9 @@ namespace Reddit.Api
             builder.Services.AddHttpClient("RedditApiAuthHttpClient", x =>
             {
                 string? baseUrl = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiBaseUrl");
-                string? username = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiUsername");
-                string? password = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiPassword");
-                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
+                string? clientId = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiClientId");
+                string? secret = builder.Configuration.GetValue<string>("RedditApiSettings:RedditApiSecret");
+                string credentials = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{clientId}:{secret}"));
                 x.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
                 x.DefaultRequestHeaders.UserAgent.ParseAdd("Reddit.Api/v1 (by /u/aaronmontgomery2809)");
                 x.BaseAddress = new Uri(baseUrl!);
